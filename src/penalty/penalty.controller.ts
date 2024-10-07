@@ -1,5 +1,3 @@
-// src/penalty/penalty.controller.ts
-
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { PenaltyService } from './penalty.service';
 import { CreatePenaltyDto } from './dtos/create-penalty.dto';
@@ -10,7 +8,8 @@ export class PenaltyController {
   constructor(private readonly penaltyService: PenaltyService) {}
 
   @Post()
-  create(@Body() createPenaltyDto: CreatePenaltyDto): Promise<Penalty> {
+  create(@Body() createPenaltyDto: CreatePenaltyDto): Promise<{ message: string, penalty: Penalty }> {
+    console.log('Create Penalty DTO:', createPenaltyDto);
     return this.penaltyService.create(createPenaltyDto);
   }
 
@@ -25,7 +24,7 @@ export class PenaltyController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: number): Promise<{ message: string }> {
     return this.penaltyService.remove(id);
   }
 }

@@ -17,23 +17,30 @@ export class PenaltyService {
     private readonly installmentRepository: Repository<Installment>,
   ) {}
 
-  async create(createPenaltyDto: CreatePenaltyDto): Promise<Penalty> {
+  async create(createPenaltyDto: CreatePenaltyDto): Promise<{ message: string, penalty: Penalty }> {
     const installment = await this.installmentRepository.findOne({
       where: { id: createPenaltyDto.installmentId },
     });
-
+  
+    console.log('Installment:', installment); // Tambahkan ini untuk cek apakah installment ditemukan
+  
     if (!installment) {
       throw new NotFoundException('Installment not found');
     }
-
+  
     const penalty = this.penaltyRepository.create({
       penaltyAmount: createPenaltyDto.penaltyAmount,
       penaltyReason: createPenaltyDto.penaltyReason,
       installment,
     });
-
-    return this.penaltyRepository.save(penalty);
+  
+    await this.penaltyRepository.save(penalty);
+    return {
+      message: 'Penalty successfully created',
+      penalty,
+    };
   }
+  
 
   async findAll(): Promise<Penalty[]> {
     return this.penaltyRepository.find({ relations: ['installment'] });
@@ -52,10 +59,12 @@ export class PenaltyService {
     return penalty;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const result = await this.penaltyRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Penalty not found');
     }
+    return { message: 'Penalty successfully deleted' };
   }
 }
+

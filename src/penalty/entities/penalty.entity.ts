@@ -8,7 +8,7 @@ export class Penalty {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('decimal', { precision: 12, scale: 2 })
+  @Column('decimal', { precision: 15, scale: 2 })
   penaltyAmount: number;
 
   @Column()

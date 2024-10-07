@@ -14,9 +14,13 @@ export class InstallmentService {
     private readonly installmentRepository: Repository<Installment>,
   ) {}
 
-  async create(createInstallmentDto: CreateInstallmentDto): Promise<Installment> {
+  async create(createInstallmentDto: CreateInstallmentDto): Promise<{ message: string, installment: Installment }> {
     const installment = this.installmentRepository.create(createInstallmentDto);
-    return this.installmentRepository.save(installment);
+    await this.installmentRepository.save(installment);
+    return {
+      message: 'Installment successfully created',
+      installment,
+    };
   }
 
   async findAll(): Promise<Installment[]> {
@@ -34,8 +38,20 @@ export class InstallmentService {
     return installment;
   }
 
-  async remove(id: number): Promise<void> {
+  async update(id: number, updateInstallmentDto: Partial<CreateInstallmentDto>): Promise<{ message: string, installment: Installment }> {
+    const installment = await this.findOne(id);
+    Object.assign(installment, updateInstallmentDto);
+    await this.installmentRepository.save(installment);
+    return {
+      message: 'Installment successfully updated',
+      installment,
+    };
+  }
+
+  async remove(id: number): Promise<{ message: string }> {
     const installment = await this.findOne(id);
     await this.installmentRepository.remove(installment);
+    return { message: 'Installment successfully deleted' };
   }
 }
+

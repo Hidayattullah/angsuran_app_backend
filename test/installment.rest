@@ -5,10 +5,9 @@ POST {{baseUrl}}/installments
 Content-Type: application/json
 
 {
-  "installmentNo": 1,
-  "amountPerMonth": 5000000,
-  "dueDate": "2024-10-30",
-  "contractId": 1
+  "installmentNo": 3,
+  "amountPerMonth": 9000000,
+  "dueDate": "2024-10-30"
 }
 
 ### 2. Mendapatkan semua installment

@@ -14,10 +14,10 @@ export class Contract extends BaseEntity {
   @Column()
   clientName: string;       // Nama klien
 
-  @Column('decimal', { precision: 10, scale: 2 })
+  @Column('decimal', { precision: 15, scale: 2 })
   otr: number;              // Harga OTR (on the road price)
-
-  @Column('decimal', { precision: 10, scale: 2 })
+  
+  @Column('decimal', { precision: 15, scale: 2 })
   downPayment: number;      // Uang muka
 
   @Column()
