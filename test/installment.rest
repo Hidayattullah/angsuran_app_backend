@@ -1,0 +1,28 @@
+@baseUrl = http://127.0.0.1:3002
+
+### 1. Membuat installment baru
+POST {{baseUrl}}/installments
+Content-Type: application/json
+
+{
+  "installmentNo": 1,
+  "amountPerMonth": 5000000,
+  "dueDate": "2024-10-30",
+  "contractId": 1
+}
+
+### 2. Mendapatkan semua installment
+GET {{baseUrl}}/installments
+Accept: application/json
+
+###
+
+### 3. Mendapatkan satu installment berdasarkan ID
+GET {{baseUrl}}/installments/1
+Accept: application/json
+
+###
+
+### 4. Menghapus installment berdasarkan ID
+DELETE {{baseUrl}}/installments/1
+Accept: application/json

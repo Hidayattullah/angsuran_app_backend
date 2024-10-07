@@ -12,7 +12,7 @@ async function bootstrap() {
   // Mengaktifkan CORS
   app.enableCors();
 
-  // Mendengarkan pada port 3001 di localhost
+  // Mendengarkan pada port 3002 di localhost
   await app.listen(3002, '127.0.0.1');
 }
 

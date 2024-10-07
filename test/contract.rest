@@ -1,0 +1,36 @@
+@baseUrl = http://127.0.0.1:3002
+
+### 1. Membuat contract baru
+POST {{baseUrl}}/contracts
+Content-Type: application/json
+
+{
+  "contractNo": "AGR00001",
+  "clientName": "Sugus",
+  "otr": 240000000
+}
+
+### 2. Mendapatkan semua contract
+GET {{baseUrl}}/contracts
+Accept: application/json
+
+###
+
+### 3. Mendapatkan satu contract berdasarkan ID
+GET {{baseUrl}}/contracts/1
+Accept: application/json
+
+###
+
+### 4. Memperbarui contract berdasarkan ID
+PUT {{baseUrl}}/contracts/1
+Content-Type: application/json
+
+{
+  "clientName": "Sugus Updated",
+  "otr": 250000000
+}
+
+### 5. Menghapus contract berdasarkan ID
+DELETE {{baseUrl}}/contracts/1
+Accept: application/json
