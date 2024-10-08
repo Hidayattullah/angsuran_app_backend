@@ -6,7 +6,6 @@ import { CreatePenaltyDto } from './dtos/create-penalty.dto';
 import { UpdatePenaltyDto } from './dtos/update-penalty.dto';
 import { Installment } from 'src/installment/entities/installment.entity';
 
-
 @Injectable()
 export class PenaltyService {
   constructor(
@@ -18,7 +17,7 @@ export class PenaltyService {
   ) {}
 
   // Create a new penalty
-  async create(createPenaltyDto: CreatePenaltyDto): Promise<Penalty> {
+  async create(createPenaltyDto: CreatePenaltyDto): Promise<{ message: string; penalty: Penalty }> {
     const { installmentId, ...penaltyData } = createPenaltyDto;
     
     // Find the related installment
@@ -33,25 +32,39 @@ export class PenaltyService {
       installment,  // Assign the related installment
     });
 
-    return this.penaltyRepository.save(penalty);
+    const savedPenalty = await this.penaltyRepository.save(penalty);
+
+    return {
+      message: `Penalty for installment ID ${installmentId} has been successfully created.`,
+      penalty: savedPenalty,
+    };
   }
 
   // Get all penalties
-  findAll(): Promise<Penalty[]> {
-    return this.penaltyRepository.find({ relations: ['installment'] });
+  async findAll(): Promise<{ message: string; penalties: Penalty[] }> {
+    const penalties = await this.penaltyRepository.find({ relations: ['installment'] });
+
+    return {
+      message: 'All penalties have been retrieved successfully.',
+      penalties,
+    };
   }
 
   // Get a single penalty by ID
-  async findOne(id: number): Promise<Penalty> {
+  async findOne(id: number): Promise<{ message: string; penalty: Penalty }> {
     const penalty = await this.penaltyRepository.findOne({ where: { id }, relations: ['installment'] });
     if (!penalty) {
       throw new NotFoundException(`Penalty with ID ${id} not found`);
     }
-    return penalty;
+    
+    return {
+      message: `Penalty with ID ${id} has been retrieved successfully.`,
+      penalty,
+    };
   }
 
   // Update a penalty by ID
-  async update(id: number, updatePenaltyDto: UpdatePenaltyDto): Promise<Penalty> {
+  async update(id: number, updatePenaltyDto: UpdatePenaltyDto): Promise<{ message: string; penalty: Penalty }> {
     const penalty = await this.penaltyRepository.preload({
       id,
       ...updatePenaltyDto,
@@ -60,14 +73,23 @@ export class PenaltyService {
       throw new NotFoundException(`Penalty with ID ${id} not found`);
     }
 
-    return this.penaltyRepository.save(penalty);
+    const updatedPenalty = await this.penaltyRepository.save(penalty);
+
+    return {
+      message: `Penalty with ID ${id} has been updated successfully.`,
+      penalty: updatedPenalty,
+    };
   }
 
   // Delete a penalty by ID
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const result = await this.penaltyRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Penalty with ID ${id} not found`);
     }
+
+    return {
+      message: `Penalty with ID ${id} has been successfully removed.`,
+    };
   }
 }

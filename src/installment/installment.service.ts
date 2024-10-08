@@ -6,7 +6,6 @@ import { CreateInstallmentDto } from './dtos/create-installment.dto';
 import { UpdateInstallmentDto } from './dtos/update-installment.dto';
 import { Contract } from '../contract/entities/contract.entity';
 
-
 @Injectable()
 export class InstallmentService {
   constructor(
@@ -18,7 +17,7 @@ export class InstallmentService {
   ) {}
 
   // Membuat cicilan baru
-  async create(createInstallmentDto: CreateInstallmentDto, contractId: number): Promise<Installment> {
+  async create(createInstallmentDto: CreateInstallmentDto, contractId: number): Promise<{ message: string; installment: Installment }> {
     const contract = await this.contractRepository.findOne({ where: { id: contractId } });
 
     if (!contract) {
@@ -30,18 +29,28 @@ export class InstallmentService {
       contract,
     });
 
-    return this.installmentRepository.save(installment);
+    const savedInstallment = await this.installmentRepository.save(installment);
+
+    return {
+      message: `Installment for contract ID ${contractId} has been successfully created.`,
+      installment: savedInstallment,
+    };
   }
 
   // Mendapatkan semua cicilan
-  findAll(): Promise<Installment[]> {
-    return this.installmentRepository.find({
+  async findAll(): Promise<{ message: string; installments: Installment[] }> {
+    const installments = await this.installmentRepository.find({
       relations: ['contract'],  // Include contract dalam hasil pencarian
     });
+
+    return {
+      message: 'All installments have been retrieved successfully.',
+      installments,
+    };
   }
 
   // Mendapatkan cicilan berdasarkan ID
-  async findOne(id: number): Promise<Installment> {
+  async findOne(id: number): Promise<{ message: string; installment: Installment }> {
     const installment = await this.installmentRepository.findOne({
       where: { id },
       relations: ['contract'],
@@ -51,35 +60,52 @@ export class InstallmentService {
       throw new NotFoundException(`Installment with ID ${id} not found`);
     }
 
-    return installment;
+    return {
+      message: `Installment with ID ${id} has been retrieved successfully.`,
+      installment,
+    };
   }
 
   // Memperbarui cicilan berdasarkan ID
-  async update(id: number, updateInstallmentDto: UpdateInstallmentDto): Promise<Installment> {
-    const installment = await this.findOne(id);
+  async update(id: number, updateInstallmentDto: UpdateInstallmentDto): Promise<{ message: string; installment: Installment }> {
+    const installment = await this.findOne(id).then((res) => res.installment);
 
     Object.assign(installment, updateInstallmentDto);
 
-    return this.installmentRepository.save(installment);
+    const updatedInstallment = await this.installmentRepository.save(installment);
+
+    return {
+      message: `Installment with ID ${id} has been updated successfully.`,
+      installment: updatedInstallment,
+    };
   }
 
   // Menghapus cicilan berdasarkan ID
-  async remove(id: number): Promise<void> {
-    const installment = await this.findOne(id);
+  async remove(id: number): Promise<{ message: string }> {
+    const installment = await this.findOne(id).then((res) => res.installment);
 
     await this.installmentRepository.remove(installment);
+
+    return {
+      message: `Installment with ID ${id} has been successfully removed.`,
+    };
   }
 
   // Mendapatkan semua cicilan berdasarkan contract ID
-  async findByContract(contractId: number): Promise<Installment[]> {
+  async findByContract(contractId: number): Promise<{ message: string; installments: Installment[] }> {
     const contract = await this.contractRepository.findOne({ where: { id: contractId } });
 
     if (!contract) {
       throw new NotFoundException(`Contract with ID ${contractId} not found`);
     }
 
-    return this.installmentRepository.find({
+    const installments = await this.installmentRepository.find({
       where: { contract },
     });
+
+    return {
+      message: `All installments for contract ID ${contractId} have been retrieved successfully.`,
+      installments,
+    };
   }
 }

@@ -14,7 +14,7 @@ export class ContractService {
   ) {}
 
   // Membuat kontrak baru
-  async create(createContractDto: CreateContractDto): Promise<Contract> {
+  async create(createContractDto: CreateContractDto): Promise<{ message: string; contract: Contract }> {
     const { otr, downPayment, durationInMonths } = createContractDto;
 
     // Menghitung pokok utang dan suku bunga berdasarkan durasi
@@ -31,12 +31,21 @@ export class ContractService {
       monthlyInstallment,
     });
 
-    return this.contractRepository.save(contract);
+    const savedContract = await this.contractRepository.save(contract);
+
+    return {
+      message: 'Contract has been successfully created.',
+      contract: savedContract,
+    };
   }
 
   // Mendapatkan semua kontrak
-  async findAll(): Promise<Contract[]> {
-    return this.contractRepository.find();
+  async findAll(): Promise<{ message: string; contracts: Contract[] }> {
+    const contracts = await this.contractRepository.find();
+    return {
+      message: 'All contracts have been retrieved.',
+      contracts,
+    };
   }
 
   // Mendapatkan kontrak berdasarkan ID
@@ -47,11 +56,12 @@ export class ContractService {
       throw new NotFoundException(`Contract with ID ${id} not found`);
     }
 
-    return contract;
+    return contract; // Hanya mengembalikan entity Contract
   }
 
+
   // Update kontrak berdasarkan ID
-  async update(id: number, updateContractDto: UpdateContractDto): Promise<Contract> {
+  async update(id: number, updateContractDto: UpdateContractDto): Promise<{ message: string; contract: Contract }> {
     const contract = await this.findOne(id); // Pastikan kontrak ada sebelum di-update
 
     const updatedContract = {
@@ -59,13 +69,22 @@ export class ContractService {
       ...updateContractDto,
     };
 
-    return this.contractRepository.save(updatedContract);
+    const savedContract = await this.contractRepository.save(updatedContract);
+
+    return {
+      message: `Contract with ID ${id} has been successfully updated.`,
+      contract: savedContract,
+    };
   }
 
   // Hapus kontrak berdasarkan ID
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const contract = await this.findOne(id); // Pastikan kontrak ada sebelum dihapus
-    await this.contractRepository.remove(contract);
+    await this.contractRepository.remove(contract); // Hapus kontrak yang ditemukan
+    
+    return {
+      message: `Contract with ID ${id} has been successfully removed.`, // Mengembalikan pesan sukses
+    };
   }
 
   // Fungsi tambahan: Menghitung suku bunga berdasarkan durasi

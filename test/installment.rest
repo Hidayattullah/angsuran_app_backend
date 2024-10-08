@@ -5,7 +5,7 @@ POST {{baseUrl}}/installments/6
 Content-Type: application/json
 
 {
-  "installmentNo": 4,
+  "installmentNo": 5,
   "amountPerMonth": 9000000,
   "interestRate": 5.5,         
   "principalAmount": 8000000,   
@@ -23,7 +23,7 @@ GET {{baseUrl}}/installments/5
 Accept: application/json
 
 ### 4. Memperbarui installment berdasarkan ID
-PATCH {{baseUrl}}/installments/2
+PUT {{baseUrl}}/installments/5
 Content-Type: application/json
 
 {
