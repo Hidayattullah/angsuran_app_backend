@@ -1,5 +1,3 @@
-// src/penalty/penalty.module.ts
-
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PenaltyService } from './penalty.service';

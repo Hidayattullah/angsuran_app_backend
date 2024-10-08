@@ -5,42 +5,43 @@ POST {{baseUrl}}/contracts
 Content-Type: application/json
 
 {
-  "contractNumber": "AGR00003",
+  "contractNumber": "AGR00001",
   "clientName": "Komang",  
   "otr": 270000000,
   "downPayment": 50000000,
+  "principalDebt": 220000000,     
+  "interestRate": 5.5,            
+  "monthlyInstallment": 10000000, 
   "durationInMonths": 36,
   "startDate": "2024-10-08",
   "endDate": "2027-10-08"
 }
 
-
 ### 2. Mendapatkan semua contract
 GET {{baseUrl}}/contracts
 Accept: application/json
 
-###
-
 ### 3. Mendapatkan satu contract berdasarkan ID
-GET {{baseUrl}}/contracts/3
+GET {{baseUrl}}/contracts/5
 Accept: application/json
 
-###
-
 ### 4. Memperbarui contract berdasarkan ID
-PUT {{baseUrl}}/contracts/5
+PATCH {{baseUrl}}/contracts/5
 Content-Type: application/json
 
 {
   "contractNumber": "AGR00003",
-  "clientName": "Komang",  
-  "otr": 230000000,
+  "clientName": "Rajeg",  
+  "otr": 270000000,
   "downPayment": 50000000,
+  "principalDebt": 220000000,     
+  "interestRate": 5.5,            
+  "monthlyInstallment": 10000000, 
   "durationInMonths": 36,
   "startDate": "2024-10-08",
   "endDate": "2027-10-08"
 }
 
 ### 5. Menghapus contract berdasarkan ID
-DELETE {{baseUrl}}/contracts/4
+DELETE {{baseUrl}}/contracts/5
 Accept: application/json

@@ -1,5 +1,3 @@
-// src/contract/entities/contract.entity.ts
-
 import { Installment } from 'src/installment/entities/installment.entity';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -20,6 +18,15 @@ export class Contract extends BaseEntity {
   @Column('decimal', { precision: 15, scale: 2 })
   downPayment: number;      // Uang muka
 
+  @Column('decimal', { precision: 15, scale: 2, nullable: true })
+  principalDebt: number;    // Pokok Utang (OTR - Down Payment)
+
+  @Column('decimal', { precision: 5, scale: 2, nullable: true })
+  interestRate: number;     // Suku bunga (berdasarkan durasi kontrak)
+
+  @Column('decimal', { precision: 15, scale: 2, nullable: true })
+  monthlyInstallment: number; // Angsuran per bulan
+
   @Column()
   durationInMonths: number; // Durasi kontrak dalam bulan
 
@@ -35,7 +42,7 @@ export class Contract extends BaseEntity {
   @Column({ type: 'timestamp', onUpdate: 'CURRENT_TIMESTAMP', nullable: true })
   updatedAt: Date;          // Tanggal kontrak terakhir diperbarui
 
-  // Menambahkan properti installments untuk relasi one-to-many
-  @OneToMany(() => Installment, installment => installment.contract)
-  installments: Installment[];
+  // Relasi one-to-many dengan Installments
+  @OneToMany(() => Installment, installment => installment.contract, { cascade: true })
+  installments: Installment[];  // Kontrak memiliki banyak cicilan
 }

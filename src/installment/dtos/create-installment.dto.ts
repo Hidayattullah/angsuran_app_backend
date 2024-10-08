@@ -1,21 +1,29 @@
-// src/installment/dto/create-installment.dto.ts
-
-import { IsNotEmpty, IsNumber, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsDateString, IsDecimal, IsBoolean } from 'class-validator';
 
 export class CreateInstallmentDto {
   @IsNotEmpty()
   @IsNumber()
-  contractId: number;
+  installmentNo: number;  // Nomor cicilan
 
   @IsNotEmpty()
-  @IsNumber()
-  installmentNo: number;
+  @IsDecimal({ decimal_digits: '2', force_decimal: false })
+  amountPerMonth: number;  // Jumlah cicilan per bulan (termasuk pokok dan bunga)
 
   @IsNotEmpty()
-  @IsNumber()
-  amountPerMonth: number;
+  @IsDecimal({ decimal_digits: '2', force_decimal: false })
+  interestRate: number;  // Suku bunga cicilan
+
+  @IsNotEmpty()
+  @IsDecimal({ decimal_digits: '2', force_decimal: false })
+  principalAmount: number;  // Jumlah pokok cicilan
 
   @IsNotEmpty()
   @IsDateString()
-  dueDate: string;
+  dueDate: Date;  // Tanggal jatuh tempo cicilan
+
+  @IsNotEmpty()
+  status: string;  // Status cicilan (PENDING, PAID, dll.)
+
+  @IsBoolean()
+  isPaidOff: boolean;  // Status apakah sudah lunas
 }

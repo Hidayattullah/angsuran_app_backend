@@ -1,12 +1,11 @@
-// src/penalty/penalty.service.ts
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Penalty } from './entities/penalty.entity';
 import { CreatePenaltyDto } from './dtos/create-penalty.dto';
-import { UpdatePenaltyDto } from './dtos/update-penalty.dto'; // Import UpdatePenaltyDto
-import { Installment } from '../installment/entities/installment.entity';
+import { UpdatePenaltyDto } from './dtos/update-penalty.dto';
+import { Installment } from 'src/installment/entities/installment.entity';
+
 
 @Injectable()
 export class PenaltyService {
@@ -18,77 +17,57 @@ export class PenaltyService {
     private readonly installmentRepository: Repository<Installment>,
   ) {}
 
-  async create(createPenaltyDto: CreatePenaltyDto): Promise<{ message: string, penalty: Penalty }> {
-    const installment = await this.installmentRepository.findOne({
-      where: { id: createPenaltyDto.installmentId },
-    });
-  
+  // Create a new penalty
+  async create(createPenaltyDto: CreatePenaltyDto): Promise<Penalty> {
+    const { installmentId, ...penaltyData } = createPenaltyDto;
+    
+    // Find the related installment
+    const installment = await this.installmentRepository.findOneBy({ id: installmentId });
     if (!installment) {
-      throw new NotFoundException('Installment not found');
+      throw new NotFoundException(`Installment with ID ${installmentId} not found`);
     }
-  
+
+    // Create a new penalty
     const penalty = this.penaltyRepository.create({
-      penaltyAmount: createPenaltyDto.penaltyAmount,
-      penaltyReason: createPenaltyDto.penaltyReason,
-      installment,
+      ...penaltyData,
+      installment,  // Assign the related installment
     });
-  
-    await this.penaltyRepository.save(penalty);
-    return {
-      message: 'Penalty successfully created',
-      penalty,
-    };
+
+    return this.penaltyRepository.save(penalty);
   }
-  
-  async findAll(): Promise<Penalty[]> {
+
+  // Get all penalties
+  findAll(): Promise<Penalty[]> {
     return this.penaltyRepository.find({ relations: ['installment'] });
   }
 
+  // Get a single penalty by ID
   async findOne(id: number): Promise<Penalty> {
-    const penalty = await this.penaltyRepository.findOne({
-      where: { id },
-      relations: ['installment'],
-    });
-
+    const penalty = await this.penaltyRepository.findOne({ where: { id }, relations: ['installment'] });
     if (!penalty) {
-      throw new NotFoundException('Penalty not found');
+      throw new NotFoundException(`Penalty with ID ${id} not found`);
     }
-
     return penalty;
   }
 
-  async update(id: number, updatePenaltyDto: UpdatePenaltyDto): Promise<{ message: string, penalty: Penalty }> {
-    const penalty = await this.penaltyRepository.findOne({ where: { id }, relations: ['installment'] });
-
-    if (!penalty) {
-      throw new NotFoundException('Penalty not found');
-    }
-
-    const installment = await this.installmentRepository.findOne({
-      where: { id: updatePenaltyDto.installmentId },
+  // Update a penalty by ID
+  async update(id: number, updatePenaltyDto: UpdatePenaltyDto): Promise<Penalty> {
+    const penalty = await this.penaltyRepository.preload({
+      id,
+      ...updatePenaltyDto,
     });
-
-    if (!installment) {
-      throw new NotFoundException('Installment not found');
+    if (!penalty) {
+      throw new NotFoundException(`Penalty with ID ${id} not found`);
     }
 
-    // Update properties
-    penalty.penaltyAmount = updatePenaltyDto.penaltyAmount ?? penalty.penaltyAmount;
-    penalty.penaltyReason = updatePenaltyDto.penaltyReason ?? penalty.penaltyReason;
-    penalty.installment = installment;
-
-    await this.penaltyRepository.save(penalty);
-    return { 
-      message: 'Penalty successfully updated', 
-      penalty 
-    };
+    return this.penaltyRepository.save(penalty);
   }
 
-  async remove(id: number): Promise<{ message: string }> {
+  // Delete a penalty by ID
+  async remove(id: number): Promise<void> {
     const result = await this.penaltyRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException('Penalty not found');
+      throw new NotFoundException(`Penalty with ID ${id} not found`);
     }
-    return { message: 'Penalty successfully deleted' };
   }
 }

@@ -1,6 +1,4 @@
-// src/contract/contract.controller.ts
-
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ContractService } from './contract.service';
 import { CreateContractDto } from './dtos/create-contract.dto';
 import { UpdateContractDto } from './dtos/update-contract.dto';
@@ -10,28 +8,35 @@ import { UpdateContractDto } from './dtos/update-contract.dto';
 export class ContractController {
   constructor(private readonly contractService: ContractService) {}
 
+  // Endpoint untuk membuat kontrak baru
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createContractDto: CreateContractDto) {
     return this.contractService.create(createContractDto);
   }
 
+  // Endpoint untuk mendapatkan semua kontrak
   @Get()
   findAll() {
     return this.contractService.findAll();
   }
 
+  // Endpoint untuk mendapatkan kontrak berdasarkan ID
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.contractService.findOne(id);
+  findOne(@Param('id') id: string) {
+    return this.contractService.findOne(+id);  // Konversi ID menjadi number
   }
 
-  @Put(':id')
-  update(@Param('id') id: number, @Body() updateContractDto: UpdateContractDto) {
-    return this.contractService.update(id, updateContractDto);
+  // Endpoint untuk memperbarui kontrak berdasarkan ID
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto) {
+    return this.contractService.update(+id, updateContractDto);  // Konversi ID menjadi number
   }
 
+  // Endpoint untuk menghapus kontrak berdasarkan ID
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.contractService.remove(id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: string) {
+    return this.contractService.remove(+id);  // Konversi ID menjadi number
   }
 }

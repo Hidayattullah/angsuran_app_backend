@@ -1,38 +1,41 @@
 @baseUrl = http://127.0.0.1:3002
 
 ### 1. Membuat installment baru
-POST {{baseUrl}}/installments
+POST {{baseUrl}}/installments/6
 Content-Type: application/json
 
 {
   "installmentNo": 4,
   "amountPerMonth": 9000000,
-  "dueDate": "2024-10-30"
+  "interestRate": 5.5,         
+  "principalAmount": 8000000,   
+  "dueDate": "2024-10-30",
+  "status": "PENDING",        
+  "isPaidOff": false    
 }
 
 ### 2. Mendapatkan semua installment
 GET {{baseUrl}}/installments
 Accept: application/json
 
-###
+### 3. Mendapatkan satu installment berdasarkan ID
+GET {{baseUrl}}/installments/5
+Accept: application/json
 
+### 4. Memperbarui installment berdasarkan ID
 PATCH {{baseUrl}}/installments/2
 Content-Type: application/json
 
 {
-  "installmentNo": 2,
+  "installmentNo": 4,
   "amountPerMonth": 9000000,
-  "dueDate": "2024-10-30"
+  "interestRate": 5.5,         
+  "principalAmount": 8000000,   
+  "dueDate": "2024-10-30",
+  "status": "PENDING",        
+  "isPaidOff": false    
 }
 
-###
-
-### 3. Mendapatkan satu installment berdasarkan ID
-GET {{baseUrl}}/installments/1
-Accept: application/json
-
-###
-
-### 4. Menghapus installment berdasarkan ID
+### 5. Menghapus installment berdasarkan ID
 DELETE {{baseUrl}}/installments/1
 Accept: application/json

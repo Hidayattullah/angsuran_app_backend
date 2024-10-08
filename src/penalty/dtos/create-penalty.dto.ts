@@ -1,17 +1,15 @@
-// src/penalty/dtos/create-penalty.dto.ts
-
-import { IsDecimal, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDecimal, IsNotEmpty, IsString, IsInt } from 'class-validator';
 
 export class CreatePenaltyDto {
-  @IsNumber()
-  @IsNotEmpty()
-  installmentId: number;
+  @IsDecimal({ decimal_digits: '2' }, { message: 'Penalty amount must be a decimal with up to 2 decimal places.' })
+  @IsNotEmpty({ message: 'Penalty amount is required.' })
+  penaltyAmount: number;  // Jumlah penalti
 
-  @IsDecimal()
-  @IsNotEmpty()
-  penaltyAmount: number;
+  @IsString({ message: 'Penalty reason must be a string.' })
+  @IsNotEmpty({ message: 'Penalty reason is required.' })
+  penaltyReason: string;  // Alasan pemberian penalti
 
-  @IsString()
-  @IsNotEmpty()
-  penaltyReason: string;
+  @IsInt({ message: 'Installment ID must be an integer.' })
+  @IsNotEmpty({ message: 'Installment ID is required.' })
+  installmentId: number;  // ID dari installment terkait
 }
