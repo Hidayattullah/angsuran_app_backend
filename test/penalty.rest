@@ -5,7 +5,7 @@ POST {{baseUrl}}/penalties
 Content-Type: application/json
 
 {
-  "installmentId": 2,
+  "installmentId": 3,
   "penaltyAmount": 20000,
   "penaltyReason": "Denda keterlambatan"
 }
@@ -13,6 +13,16 @@ Content-Type: application/json
 ### 2. Mendapatkan semua penalty
 GET {{baseUrl}}/penalties
 Accept: application/json
+
+### 3. Mengupdate penalty
+PUT {{baseUrl}}/penalties/2
+Content-Type: application/json
+
+{
+  "installmentId": 2,
+  "penaltyAmount": 20000,
+  "penaltyReason": "Denda keterlambatan"
+}
 
 ### 3. Mendapatkan satu penalty berdasarkan ID
 GET {{baseUrl}}/penalties/1

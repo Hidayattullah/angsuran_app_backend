@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Penalty } from './entities/penalty.entity';
 import { CreatePenaltyDto } from './dtos/create-penalty.dto';
+import { UpdatePenaltyDto } from './dtos/update-penalty.dto'; // Import UpdatePenaltyDto
 import { Installment } from '../installment/entities/installment.entity';
 
 @Injectable()
@@ -21,8 +22,6 @@ export class PenaltyService {
     const installment = await this.installmentRepository.findOne({
       where: { id: createPenaltyDto.installmentId },
     });
-  
-    console.log('Installment:', installment); // Tambahkan ini untuk cek apakah installment ditemukan
   
     if (!installment) {
       throw new NotFoundException('Installment not found');
@@ -41,7 +40,6 @@ export class PenaltyService {
     };
   }
   
-
   async findAll(): Promise<Penalty[]> {
     return this.penaltyRepository.find({ relations: ['installment'] });
   }
@@ -59,6 +57,33 @@ export class PenaltyService {
     return penalty;
   }
 
+  async update(id: number, updatePenaltyDto: UpdatePenaltyDto): Promise<{ message: string, penalty: Penalty }> {
+    const penalty = await this.penaltyRepository.findOne({ where: { id }, relations: ['installment'] });
+
+    if (!penalty) {
+      throw new NotFoundException('Penalty not found');
+    }
+
+    const installment = await this.installmentRepository.findOne({
+      where: { id: updatePenaltyDto.installmentId },
+    });
+
+    if (!installment) {
+      throw new NotFoundException('Installment not found');
+    }
+
+    // Update properties
+    penalty.penaltyAmount = updatePenaltyDto.penaltyAmount ?? penalty.penaltyAmount;
+    penalty.penaltyReason = updatePenaltyDto.penaltyReason ?? penalty.penaltyReason;
+    penalty.installment = installment;
+
+    await this.penaltyRepository.save(penalty);
+    return { 
+      message: 'Penalty successfully updated', 
+      penalty 
+    };
+  }
+
   async remove(id: number): Promise<{ message: string }> {
     const result = await this.penaltyRepository.delete(id);
     if (result.affected === 0) {
@@ -67,4 +92,3 @@ export class PenaltyService {
     return { message: 'Penalty successfully deleted' };
   }
 }
-

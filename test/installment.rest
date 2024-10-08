@@ -5,7 +5,7 @@ POST {{baseUrl}}/installments
 Content-Type: application/json
 
 {
-  "installmentNo": 3,
+  "installmentNo": 4,
   "amountPerMonth": 9000000,
   "dueDate": "2024-10-30"
 }
@@ -13,6 +13,17 @@ Content-Type: application/json
 ### 2. Mendapatkan semua installment
 GET {{baseUrl}}/installments
 Accept: application/json
+
+###
+
+PATCH {{baseUrl}}/installments/2
+Content-Type: application/json
+
+{
+  "installmentNo": 2,
+  "amountPerMonth": 9000000,
+  "dueDate": "2024-10-30"
+}
 
 ###
 

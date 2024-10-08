@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Installment } from './entities/installment.entity';
 import { CreateInstallmentDto } from './dtos/create-installment.dto';
-
+import { UpdateInstallmentDto } from './dtos/update-installment.dto'; // Import UpdateInstallmentDto
 
 @Injectable()
 export class InstallmentService {
@@ -14,6 +14,7 @@ export class InstallmentService {
     private readonly installmentRepository: Repository<Installment>,
   ) {}
 
+  // Menggunakan CreateInstallmentDto untuk create installment
   async create(createInstallmentDto: CreateInstallmentDto): Promise<{ message: string, installment: Installment }> {
     const installment = this.installmentRepository.create(createInstallmentDto);
     await this.installmentRepository.save(installment);
@@ -38,9 +39,10 @@ export class InstallmentService {
     return installment;
   }
 
-  async update(id: number, updateInstallmentDto: Partial<CreateInstallmentDto>): Promise<{ message: string, installment: Installment }> {
+  // Menggunakan UpdateInstallmentDto untuk update installment
+  async update(id: number, updateInstallmentDto: UpdateInstallmentDto): Promise<{ message: string, installment: Installment }> {
     const installment = await this.findOne(id);
-    Object.assign(installment, updateInstallmentDto);
+    Object.assign(installment, updateInstallmentDto); // Menerapkan perubahan parsial
     await this.installmentRepository.save(installment);
     return {
       message: 'Installment successfully updated',
@@ -54,4 +56,3 @@ export class InstallmentService {
     return { message: 'Installment successfully deleted' };
   }
 }
-

@@ -5,8 +5,8 @@ POST {{baseUrl}}/contracts
 Content-Type: application/json
 
 {
-  "contractNumber": "AGR00002",
-  "clientName": "Santi",  
+  "contractNumber": "AGR00003",
+  "clientName": "Komang",  
   "otr": 270000000,
   "downPayment": 50000000,
   "durationInMonths": 36,
@@ -28,13 +28,13 @@ Accept: application/json
 ###
 
 ### 4. Memperbarui contract berdasarkan ID
-PUT {{baseUrl}}/contracts/3
+PUT {{baseUrl}}/contracts/5
 Content-Type: application/json
 
 {
-  "contractNumber": "AGR00001",
-  "clientName": "Sugus Aryanto",  
-  "otr": 250000000,
+  "contractNumber": "AGR00003",
+  "clientName": "Komang",  
+  "otr": 230000000,
   "downPayment": 50000000,
   "durationInMonths": 36,
   "startDate": "2024-10-08",
